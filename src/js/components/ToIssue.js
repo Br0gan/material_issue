@@ -1,4 +1,5 @@
 import React from "react";
+import "../client.css"
 
 export default class ToIssue extends React.Component {
   render() {
@@ -16,11 +17,11 @@ export default class ToIssue extends React.Component {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="success">
             <td>3-TLA39-NH900-01</td>
             <td>100</td>
-            <td>20</td>
-            <td>80</td>
+            <td>100</td>
+            <td>0</td>
           </tr>
           <tr>
             <td>3-TLA39-NH900-02</td>

@@ -1,11 +1,11 @@
-#scale {
-  font-size: 17px;
+p#scale.well {
+  font-size: 45px;
+  height:67px;
+  padding-top: 1px;
 }
-
 #un-qty {
   width: 150px;
   height: 35px;
-  border-radius: 5px;
 }
 .panel {
   border-radius: 5px;
@@ -26,4 +26,20 @@
 
 .btn-warning {
   border-radius: 5px;
+}
+
+.panel-heading {
+  height: 30px;
+  margin-bottom: -10px;
+}
+
+#heading-title {
+  margin-top: -5px;
+  font-size: 15px;
+}
+
+#barcode_id {
+  font-size: 39px;
+  font-weight: bold;
+  text-align: center;
 }
