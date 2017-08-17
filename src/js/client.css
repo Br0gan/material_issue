@@ -43,3 +43,15 @@ p#scale.well {
   font-weight: bold;
   text-align: center;
 }
+
+#order-no {
+  font-size: 30px;
+}
+
+#clear {
+  margin-bottom: -90px;
+}
+
+#issue {
+  font-size: 20px;
+}

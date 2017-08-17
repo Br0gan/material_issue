@@ -3,6 +3,7 @@ import React from "react";
 import Barcode from "./Barcode";
 import OrderInfo from "./OrderInfo";
 import OrderNotFound from "./OrderNotFound";
+import OrderSearch from "./OrderSearch";
 import ToIssue from "./ToIssue";
 import Issued from "./Issued";
 
@@ -24,25 +25,32 @@ export default class OrderEntry extends React.Component {
         this.setState({isFound: false});
     }
 
+    clearOrder(e) {
+      this.setState({isFound: false});
+    }
+
     render() {
     var order = this.state.order;
+    var handleOrder = this.handleOrder.bind(this);
+    var clearOrder = this.clearOrder.bind(this);
+
+    function enterOrder(found) {
+      if (found) {
+        return;
+      }
+      return <OrderSearch handleOrder={handleOrder}/>
+    }
+
     function finder(x) {
       if(x) {
-        return [<Barcode barcodeId={order}/>, <ToIssue/>, <Issued/>,];
+        return [<Barcode barcodeId={order}/>, <OrderInfo/>, <ToIssue/>, <Issued/>,];
       }
       return <OrderNotFound/>;
     }
-    console.log();
+
     return (
       <div>
-      <div className="container" id="enter_order">
-        <div className="form-group">
-          <label className="col-sm-2 control-label text-right">Shop Order:</label>
-          <div className="col-sm-3">
-            <input className="form-control input-sm" id="enter_order_no" type="text" onChange={this.handleOrder.bind(this)}/>
-          </div>
-        </div>
-      </div>
+      {enterOrder(this.state.isFound)}
       {finder(this.state.isFound)}
       </div>
     );
