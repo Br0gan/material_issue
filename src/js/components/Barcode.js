@@ -21,7 +21,7 @@ export default class Barcode extends React.Component {
               </div>
             </div>
             <div>
-              <a href="#" id="issue" className="btn btn-info btn-block">ISSUE AMOUNT</a> 
+              <a href="#" id="issue" className="btn btn-info btn-block">ISSUE BARCODE TO ORDER</a> 
             </div>
           </div>
         </div>

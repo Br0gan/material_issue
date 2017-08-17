@@ -1,10 +1,11 @@
 import React from "react";
 import "../client.css"
+import uuid from "uuid/v4";
 
 export default class ToIssue extends React.Component {
   render() {
    var components = this.props.components.map((part) =>
-        <tr className={getIssuedStatus((part.qty_req - part.qty_iss))}>
+        <tr key={uuid()} className={getIssuedStatus((part.qty_req - part.qty_iss))}>
           <td>{part.part_no}</td>
           <td>{part.qty_req}</td>
           <td>{part.qty_iss}</td>
@@ -14,14 +15,13 @@ export default class ToIssue extends React.Component {
     );
     function getIssuedStatus(x) {
       if (x === 0) {
-        return "success";
+        return 'success';
       }
-      if (x < 0 ) {
-        return "danger";
+      if (x < 0) {
+        return 'danger';
       }
+      return;
     }
-
-    console.log(components);
 
     return (
       <div className="container" id="toIssue">

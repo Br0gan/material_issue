@@ -1,7 +1,22 @@
 import React from "react";
+import uuid from "uuid/v4";
 
 export default class Issued extends React.Component {
   render() {
+    var issuedItems = this.props.issuedItems.map((part) =>
+          <tr key={uuid()}>
+            <td>{part.part_no}</td>
+            <td>{part.barcode_id}</td>
+            <td>{part.lot_batch_no}</td>
+            <td>{part.qty_issued}</td>
+            <td>
+                <input className="form-control" id="un-qty" type="Text"/>
+            </td>
+            <td>
+                <button className="btn btn-warning">Submit</button>
+            </td>
+          </tr>
+    );
     return (
 			<div className="container" id="issued">
 				<h2>Issued Items</h2>
@@ -11,45 +26,14 @@ export default class Issued extends React.Component {
           <tr>
             <th>Part Number</th>
             <th>Barcode ID</th>
+            <th>Lot Batch No</th>
             <th>Qty Issued</th>
             <th>Qty To Unissue</th>
             <th>Submit</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>3-TLA39-NH900-01</td>
-            <td>12345</td>
-            <td>80</td>
-            <td>
-                <input className="form-control" id="un-qty" type="Text"/>
-            </td>
-            <td>
-                <button className="btn btn-warning">Submit</button>
-            </td>
-          </tr>
-          <tr>
-            <td>3-TLA39-NH900-01</td>
-            <td>12345</td>
-            <td>80</td>
-            <td>
-                <input className="form-control" id="un-qty" type="Text"/>
-            </td>
-            <td>
-                <button className="btn btn-warning">Submit</button>
-            </td>
-          </tr>
-          <tr>
-            <td>3-TLA39-NH900-01</td>
-            <td>12345</td>
-            <td>80</td>
-            <td>
-                <input className="form-control" id="un-qty" type="Text"/>
-            </td>
-            <td>
-                <button className="btn btn-warning">Submit</button>
-            </td>
-          </tr>
+          <tbody>
+            {issuedItems}
           </tbody>
           </table>
       </div>
