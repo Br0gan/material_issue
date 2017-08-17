@@ -13,6 +13,24 @@ export default class OrderEntry extends React.Component {
       this.state = {
         isFound: false,
       }
+
+      this.components = [
+        {
+          part_no: "3-TLA39-NH900-01",
+          qty_req: 100,
+          qty_iss: 100,
+        },
+        {
+          part_no: "3-TLA30-NH900-02",
+          qty_req: 80,
+          qty_iss: 90,
+        },
+        {
+          part_no: "3-TLA30-NH900-04",
+          qty_req: 30,
+          qty_iss: 20,
+        }
+      ];
     }
     
     handleOrder(e) {
@@ -33,6 +51,7 @@ export default class OrderEntry extends React.Component {
     var order = this.state.order;
     var handleOrder = this.handleOrder.bind(this);
     var clearOrder = this.clearOrder.bind(this);
+    var components = this.components;
 
     function enterOrder(found) {
       if (found) {
@@ -43,15 +62,15 @@ export default class OrderEntry extends React.Component {
 
     function finder(x) {
       if(x) {
-        return [<Barcode barcodeId={order}/>, <OrderInfo/>, <ToIssue/>, <Issued/>,];
+        return [<Barcode barcodeId={order}/>, <OrderInfo/>, <ToIssue components={components}/>, <Issued/>,];
       }
       return <OrderNotFound/>;
     }
 
     return (
       <div>
-      {enterOrder(this.state.isFound)}
-      {finder(this.state.isFound)}
+        {enterOrder(this.state.isFound)}
+        {finder(this.state.isFound)}
       </div>
     );
   }

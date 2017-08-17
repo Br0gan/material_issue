@@ -3,6 +3,26 @@ import "../client.css"
 
 export default class ToIssue extends React.Component {
   render() {
+   var components = this.props.components.map((part) =>
+        <tr className={getIssuedStatus((part.qty_req - part.qty_iss))}>
+          <td>{part.part_no}</td>
+          <td>{part.qty_req}</td>
+          <td>{part.qty_iss}</td>
+          <td>{part.qty_req - part.qty_iss}</td>
+        </tr>
+
+    );
+    function getIssuedStatus(x) {
+      if (x === 0) {
+        return "success";
+      }
+      if (x < 0 ) {
+        return "danger";
+      }
+    }
+
+    console.log(components);
+
     return (
       <div className="container" id="toIssue">
         <h2>Components</h2>
@@ -17,24 +37,7 @@ export default class ToIssue extends React.Component {
           </tr>
         </thead>
         <tbody>
-          <tr className="success">
-            <td>3-TLA39-NH900-01</td>
-            <td>100</td>
-            <td>100</td>
-            <td>0</td>
-          </tr>
-          <tr>
-            <td>3-TLA39-NH900-02</td>
-            <td>100</td>
-            <td>20</td>
-            <td>80</td>
-          </tr>
-          <tr>
-            <td>3-TLA39-NH900-03</td>
-            <td>100</td>
-            <td>20</td>
-            <td>80</td>
-          </tr>
+          {components}
         </tbody>
         </table>
         <div className="row">
