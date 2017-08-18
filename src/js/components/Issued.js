@@ -13,7 +13,7 @@ export default class Issued extends React.Component {
                 <input className="form-control" id="un-qty" type="Text"/>
             </td>
             <td>
-                <button className="btn btn-warning">Submit</button>
+                <button className="btn btn-sm btn-warning">Submit</button>
             </td>
           </tr>
     );
