@@ -60,15 +60,24 @@ export default class OrderEntry extends React.Component {
         const orderNo = e.target.value;
         this.setState({order: orderNo});
         if (orderNo.length > 5) {
-          this.setState({isFound: true});
+          this.setState({
+            isFound: true,
+          });
+          e.target.value = "";
           return;
         }
-          this.setState({isFound: false});
+        this.setState({
+          isFound: false,
+        });
+        e.target.value = "";
       }
     }
 
     clearOrder(e) {
-      this.setState({isFound: false});
+      this.setState({
+        isFound: false,
+        order: ""
+      });
     }
 
     render() {
@@ -77,13 +86,6 @@ export default class OrderEntry extends React.Component {
     var clearOrder = this.clearOrder.bind(this);
     var components = this.components;
     var issuedItems = this.issuedItems;
-
-    function enterOrder(found) {
-      if (found) {
-        return;
-      }
-      return <OrderSearch handleOrder={handleOrder}/>
-    }
 
     function finder(x) {
       if(x) {
@@ -99,7 +101,7 @@ export default class OrderEntry extends React.Component {
 
     return (
       <div>
-        {enterOrder(this.state.isFound)}
+        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={order}/>
         {finder(this.state.isFound)}
       </div>
     );
