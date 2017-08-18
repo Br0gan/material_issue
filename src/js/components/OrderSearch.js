@@ -3,8 +3,16 @@ import React from "react";
 export default class OrderSearch extends React.Component {
   render() {
     const handleOrder = this.props.handleOrder;
+    const found = this.props.found;
 
-    return(
+    function handleButton(found, handler) {
+      if (found) {
+        return <a href="#" class="btn btn-sm btn-danger" onClick={handler}>Clear Order</a>;
+      }
+      return;
+    }
+
+    return (
       <div className="container" id="enter_order">
         <div className="form-group">
           <div class="row">
@@ -14,7 +22,7 @@ export default class OrderSearch extends React.Component {
             </div>
             <div class="col-sm-4"></div>
             <div className="col-sm-2">
-              <a href="#" class="btn btn-sm btn-danger" onClick={this.props.clearOrder}>Clear Order</a>
+              {handleButton(this.props.found, this.props.clearOrder)}
             </div>
           </div>
         </div>

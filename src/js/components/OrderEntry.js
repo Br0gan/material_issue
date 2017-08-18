@@ -101,7 +101,7 @@ export default class OrderEntry extends React.Component {
 
     return (
       <div>
-        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={order}/>
+        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={order} found={this.state.isFound}/>
         {finder(this.state.isFound)}
       </div>
     );
