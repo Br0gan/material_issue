@@ -56,13 +56,15 @@ export default class OrderEntry extends React.Component {
     }
     
     handleOrder(e) {
-      const orderNo = e.target.value;
-      this.setState({order: orderNo});
-      if (orderNo.length > 5) {
-        this.setState({isFound: true});
-        return;
+      if (e.which === 13) {
+        const orderNo = e.target.value;
+        this.setState({order: orderNo});
+        if (orderNo.length > 5) {
+          this.setState({isFound: true});
+          return;
+        }
+          this.setState({isFound: false});
       }
-        this.setState({isFound: false});
     }
 
     clearOrder(e) {
