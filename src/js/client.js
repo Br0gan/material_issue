@@ -10,6 +10,5 @@ const app = document.getElementById('app');
 ReactDOM.render(
   <div>
     <Layout/>
-    <Login/>
   </div>
   , app)

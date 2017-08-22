@@ -11,13 +11,13 @@ export default class Login extends React.Component {
                     <form>
                     <div className="form-group">
                         <label for="userId">User ID:</label>
-                        <input className="form-control" id="userId"/>
+                        <input className="form-control" id="userId" onChange={this.props.handleId}/>
                     </div>
                     <div className="form-group">
                         <label for="pwd">Password:</label>
-                        <input type="password" className="form-control" id="pwd"/>
+                        <input type="password" className="form-control" id="pwd" onChange={this.props.handlePw}/>
                     </div>
-                    <button className="btn btn-info btn-block">Submit</button>
+                    <button className="btn btn-info btn-block" onClick={this.props.handleLogin}>Submit</button>
                 </form>
                 </div>
             </div>
