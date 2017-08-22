@@ -17,7 +17,7 @@ export default class Barcode extends React.Component {
               </div>
               <div className="col-md-6">
                 <label for="scale">Scale Reading:</label>
-                <p className="well text-center" id="scale"><strong>{barcodeId}</strong><small>kg</small></p>
+                <p className="well text-center" id="scale"><strong>{barcodeId}</strong><small> kg</small></p>
               </div>
             </div>
             <div>
