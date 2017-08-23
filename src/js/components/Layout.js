@@ -44,7 +44,8 @@ export default class Layout extends React.Component {
                         <h1>Suminoe Textiles <small>| Fiber Mixing Material Issue</small></h1>
                     </div>
                     <ul className="nav navbar-nav navbar-right">
-                      <li><a href="#" onClick={this.handleLogout.bind(this)}><h4>{(this.state.loggedIn) ? "Welcome, " + this.state.userId : ""}</h4></a></li>
+                      <li><h4>{(this.state.loggedIn) ? "Welcome, " + this.state.userId : ""}</h4></li>
+                      <li><a href="#" onClick={this.handleLogout.bind(this)}>{(this.state.loggedIn) ? "Logout" : ""}</a></li>
                     </ul>
                     <div className="col-md-12"><hr/></div>
                 </nav>
