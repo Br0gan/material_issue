@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 import OrderEntry from "./OrderEntry";
 import Login from "./Login"
@@ -13,12 +14,24 @@ export default class Layout extends React.Component {
         loading: false
       }
     }
-
-    handleLogin(e) {
-      this.setState({loading: true})
-
-      setTimeout(() => {this.setState({loading: false, loggedIn: true})}, 5000)
+    
+  handleLogin(e) {
+      this.setState({loading:true})
+      axios({
+        baseURL: 'http://localhost:3000/login',
+        method: 'POST',
+        data: {id: this.state.userId, pass: this.state.pass},
+        transformRequest: data => JSON.stringify(data)
+      })
+      .then((res) => {
+        if (res.data.status) {
+          this.setState({loading: false, loggedIn: true, pass: ""})
+        }
+        this.setState({loading: false, pass: ""})
+      })
+        .catch((err) => {console.log(err)})
     }
+
     handleId(e) {
       this.setState({
         userId: e.target.value
