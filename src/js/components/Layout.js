@@ -2,20 +2,22 @@ import React from "react";
 
 import OrderEntry from "./OrderEntry";
 import Login from "./Login"
+import Loading from "./Loading"
 
 export default class Layout extends React.Component {
     constructor() {
       super();
       this.state = {
         userId: "",
-        loggedIn: false 
+        loggedIn: false,
+        loading: false
       }
     }
 
     handleLogin(e) {
-      this.setState({
-        loggedIn: true
-      })
+      this.setState({loading: true})
+
+      setTimeout(() => {this.setState({loading: false, loggedIn: true})}, 5000)
     }
     handleId(e) {
       this.setState({
@@ -50,7 +52,7 @@ export default class Layout extends React.Component {
                     <div className="col-md-12"><hr/></div>
                 </nav>
             </div>
-            {(this.state.loggedIn) ? <OrderEntry/> : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
+            {this.state.loading ? <Loading/> : (this.state.loggedIn) ? <OrderEntry/> : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
           </div>
         );
     }
