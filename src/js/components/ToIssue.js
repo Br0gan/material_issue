@@ -5,11 +5,11 @@ import uuid from "uuid/v4";
 export default class ToIssue extends React.Component {
   render() {
    var components = this.props.components.map((part) =>
-        <tr key={uuid()} className={getIssuedStatus((part.qty_req - part.qty_iss))}>
+        <tr key={uuid()} className={getIssuedStatus((part.qty_remaining))}>
           <td>{part.part_no}</td>
-          <td>{part.qty_req}</td>
-          <td>{part.qty_iss}</td>
-          <td>{part.qty_req - part.qty_iss}</td>
+          <td>{part.qty_required}</td>
+          <td>{part.qty_issued}</td>
+          <td>{part.qty_remaining}</td>
         </tr>
 
     );

@@ -1,5 +1,6 @@
 import React from "react";
 import uuid from "uuid/v4";
+import axios from "axios";
 
 import Barcode from "./Barcode";
 import OrderInfo from "./OrderInfo";
@@ -14,25 +15,6 @@ export default class OrderEntry extends React.Component {
       this.state = {
         isFound: false,
       }
-
-      this.components = [
-        {
-          part_no: "3-TLA39-NH900-01",
-          qty_req: 100,
-          qty_iss: 100,
-        },
-        {
-          part_no: "3-TLA30-NH900-02",
-          qty_req: 80,
-          qty_iss: 90,
-        },
-        {
-          part_no: "3-TLA30-NH900-04",
-          qty_req: 30,
-          qty_iss: 20,
-        }
-      ];
-
       this.issuedItems = [
         {
           part_no: "3-TLA39-NH900-01",
@@ -58,18 +40,45 @@ export default class OrderEntry extends React.Component {
     handleOrder(e) {
       if (e.which === 13) {
         const orderNo = e.target.value;
-        this.setState({order: orderNo});
-        if (orderNo.length > 5) {
-          this.setState({
-            isFound: true,
-          });
-          e.target.value = "";
-          return;
-        }
-        this.setState({
-          isFound: false,
+        axios({
+          baseURL: 'http://localhost:3000/orderinfo',
+          method: 'post',
+          data: {
+            id: this.props.userId,
+            pass: this.props.pass,
+            order_no: orderNo,
+            contract: 'STA'
+          },
+          transformRequest: (data) => JSON.stringify(data) 
+        })
+          .then((res) => {
+            this.orderInfo = {
+              orderNo: res.data.order_no,
+              partNo: res.data.part_no,
+              contract: res.data.contract,
+              lotSize: res.data.lot_size,
+              qtyComplete: res.data.qty_complete,
+              qtyScrapped: res.data.qty_scrapped,
+              qtyRemaining: res.data.qty_remaining,
+              state: res.data.state
+            };
+            
+            axios({
+                baseURL: 'http://localhost:3000/components',
+                method: 'post',
+                data: {
+                  id: this.props.userId,
+                  pass: this.props.pass,
+                  order_no: orderNo,
+                  contract: 'STA'
+                },
+                transformRequest: (data) => JSON.stringify(data) 
+              })
+                .then((res) => {
+                  this.components = res.data;
+                  this.setState({isFound:true})
+                });
         });
-        e.target.value = "";
       }
     }
 
@@ -86,12 +95,13 @@ export default class OrderEntry extends React.Component {
     var clearOrder = this.clearOrder.bind(this);
     var components = this.components;
     var issuedItems = this.issuedItems;
+    var orderInfo = this.orderInfo;
 
     function finder(x) {
       if(x) {
         return [
           <Barcode key={uuid()} barcodeId={order}/>,
-          <OrderInfo key={uuid()}/>,
+          <OrderInfo key={uuid()} orderInfo={orderInfo}/>,
           <ToIssue key={uuid()} components={components}/>,
           <Issued key={uuid()} issuedItems={issuedItems}/>
       ];

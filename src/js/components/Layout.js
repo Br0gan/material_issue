@@ -25,9 +25,9 @@ export default class Layout extends React.Component {
       })
       .then((res) => {
         if (res.data.status) {
-          this.setState({loading: false, loggedIn: true, pass: ""})
+          this.setState({loading: false, loggedIn: true,})
         }
-        this.setState({loading: false, pass: ""})
+        this.setState({loading: false})
       })
         .catch((err) => {console.log(err)})
     }
@@ -65,7 +65,7 @@ export default class Layout extends React.Component {
                     <div className="col-md-12"><hr/></div>
                 </nav>
             </div>
-            {this.state.loading ? <Loading/> : (this.state.loggedIn) ? <OrderEntry/> : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
+            {this.state.loading ? <Loading/> : (this.state.loggedIn) ? <OrderEntry userId={this.state.userId} pass={this.state.pass}/> : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
           </div>
         );
     }
