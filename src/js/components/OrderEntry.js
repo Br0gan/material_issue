@@ -15,26 +15,6 @@ export default class OrderEntry extends React.Component {
       this.state = {
         isFound: false,
       }
-      this.issuedItems = [
-        {
-          part_no: "3-TLA39-NH900-01",
-          barcode_id: 12345,
-          lot_batch_no: "12391239-1",
-          qty_issued: 199
-        },
-        {
-          part_no: "3-TLA39-NH900-01",
-          barcode_id: 12345,
-          lot_batch_no: "12391239-3",
-          qty_issued: 89
-        },
-        {
-          part_no: "3-TLA39-NH900-02",
-          barcode_id: 897298,
-          lot_batch_no: "12391239-9",
-          qty_issued: 37 
-        }
-      ];
     }
     
     handleOrder(e) {
@@ -79,6 +59,22 @@ export default class OrderEntry extends React.Component {
                   this.setState({isFound:true})
                 });
         });
+        axios({
+          baseURL: 'http://localhost:3000/issued',
+          method: 'post',
+          data: {
+            id: this.props.userId,
+            pass: this.props.pass,
+            order_no: orderNo,
+            contract: 'STA'
+          },
+          transformRequest: (data) => JSON.stringify(data)
+        })
+          .then((res) => {
+            console.log(res.data)
+            this.issuedItems = res.data;
+            this.setState({isFound: true});
+          });
       }
     }
 
