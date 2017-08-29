@@ -4,7 +4,7 @@
   "description": "Shop Order Material Issue",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "webpack-dev-server --content-base src --inline --hot --host 0.0.0.0",
+    "dev": "webpack-dev-server --content-base src --inline --hot --host 0.0.0.0 --public sta-539:8080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

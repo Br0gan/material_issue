@@ -5,7 +5,15 @@ var path = require('path');
 module.exports = {
   context: path.join(__dirname, "src"),
   devtool: debug ? "inline-sourcemap" : null,
-  entry: "./js/client.js",
+  entry: "./js/client.js", 
+  devServer: {
+    proxy: {
+      "**": { target: "http://localhost:3000", bypass: (req, res) => {
+          if (req.path === '/') { return '/index.html' }
+          },    
+        },
+      },
+  },
   module: {
       loaders: [
         {

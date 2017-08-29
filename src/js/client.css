@@ -1,7 +1,7 @@
-p#scale.well {
-  font-size: 45px;
-  height:67px;
-  padding-top: 1px;
+#scale {
+  font-size: 39px;
+  font-weight: bold;
+  text-align: center;
 }
 #un-qty {
   width: 150px;

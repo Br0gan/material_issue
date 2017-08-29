@@ -18,8 +18,8 @@ export default class Layout extends React.Component {
   handleLogin(e) {
       this.setState({loading:true})
       axios({
-        baseURL: 'http://localhost:3000/login',
         method: 'POST',
+        url: '/login',
         data: {id: this.state.userId, pass: this.state.pass},
         transformRequest: data => JSON.stringify(data)
       })

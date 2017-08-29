@@ -1,10 +1,45 @@
 import React from "react";
+import axios from "axios";
 
 export default class Barcode extends React.Component {
+  constructor() {
+    super()
+  }
+
+  handleBarcode(e) {
+    this.setState({barcodeId: e.target.value})
+  }
+
+  handleScale(e) {
+    this.setState({qty_issued: e.target.value})
+  }
+
+  handleSubmit(e) {
+    axios({
+      method: 'post',
+      url: '/issuemats',
+      data: {
+        contract: 'STA',
+        order_no: this.props.orderNo,
+        barcode_id: this.state.barcodeId,
+        qty_issued: this.state.qty_issued,
+        user_id: this.props.userId
+      },
+      transformRequest: (data) => JSON.stringify(data)
+    })
+      .then((res) => {
+        document.getElementById("barcode_id").value = "";
+        document.getElementById("scale").value = "";
+        var e = {
+          which: 13,
+          target: {
+            value: this.props.orderNo,
+          },
+        }
+        this.props.handleOrder(e)
+      })
+  }
   render() {
-
-    var barcodeId = this.props.barcodeId;
-
     return(
       <div className="container">
         <div className="panel panel-primary">
@@ -13,15 +48,15 @@ export default class Barcode extends React.Component {
             <div className="row">
               <div className="col-md-6">
                 <label for="barcode_id">Barcode:</label>
-                <input className="well well-sm form-control input-lg" id="barcode_id" value={barcodeId} type="text"/>
+                <input className="well well-sm form-control input-lg" id="barcode_id" type="text" onChange={this.handleBarcode.bind(this)}/>
               </div>
               <div className="col-md-6">
                 <label for="scale">Scale Reading:</label>
-                <p className="well text-center" id="scale"><strong>{barcodeId}</strong><small> kg</small></p>
+                <input className="well well-sm form-control input-lg" id="scale" type="number" onChange={this.handleScale.bind(this)}/>
               </div>
             </div>
             <div>
-              <a href="#" id="issue" className="btn btn-info btn-block">ISSUE BARCODE TO ORDER</a> 
+              <a href="#" id="issue" className="btn btn-info btn-block" onClick={this.handleSubmit.bind(this)}>ISSUE BARCODE TO ORDER</a> 
             </div>
           </div>
         </div>

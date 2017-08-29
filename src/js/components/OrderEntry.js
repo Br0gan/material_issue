@@ -17,12 +17,13 @@ export default class OrderEntry extends React.Component {
       }
     }
     
-    handleOrder(e) {
+  handleOrder(e) {
       if (e.which === 13) {
         const orderNo = e.target.value;
+        this.setState({orderNo: e.target.value})
         axios({
-          baseURL: 'http://localhost:3000/orderinfo',
           method: 'post',
+          url: '/orderinfo',
           data: {
             id: this.props.userId,
             pass: this.props.pass,
@@ -44,8 +45,8 @@ export default class OrderEntry extends React.Component {
             };
             
             axios({
-                baseURL: 'http://localhost:3000/components',
                 method: 'post',
+                url: '/components',
                 data: {
                   id: this.props.userId,
                   pass: this.props.pass,
@@ -60,8 +61,8 @@ export default class OrderEntry extends React.Component {
                 });
         });
         axios({
-          baseURL: 'http://localhost:3000/issued',
           method: 'post',
+          url: '/issued',
           data: {
             id: this.props.userId,
             pass: this.props.pass,
@@ -71,7 +72,6 @@ export default class OrderEntry extends React.Component {
           transformRequest: (data) => JSON.stringify(data)
         })
           .then((res) => {
-            console.log(res.data)
             this.issuedItems = res.data;
             this.setState({isFound: true});
           });
@@ -83,10 +83,12 @@ export default class OrderEntry extends React.Component {
         isFound: false,
         order: ""
       });
+      document.getElementById("enter_order_no").value = "";
     }
 
     render() {
-    var order = this.state.order;
+    var orderNo = this.state.orderNo;
+    var userId = this.props.userId;
     var handleOrder = this.handleOrder.bind(this);
     var clearOrder = this.clearOrder.bind(this);
     var components = this.components;
@@ -96,10 +98,10 @@ export default class OrderEntry extends React.Component {
     function finder(x) {
       if(x) {
         return [
-          <Barcode key={uuid()} barcodeId={order}/>,
-          <OrderInfo key={uuid()} orderInfo={orderInfo}/>,
-          <ToIssue key={uuid()} components={components}/>,
-          <Issued key={uuid()} issuedItems={issuedItems}/>
+          <Barcode key={uuid()} handleOrder={handleOrder} orderNo={orderNo} userId={userId}/>,
+          (orderInfo) ? <OrderInfo key={uuid()} orderInfo={orderInfo}/> : "",
+          (components) ? <ToIssue key={uuid()} components={components}/> : "",
+          (issuedItems) ? <Issued key={uuid()} userId={userId} orderNo={orderNo} issuedItems={issuedItems} handleOrder={handleOrder}/> : ""
       ];
       }
       return <OrderNotFound/>;
@@ -107,7 +109,7 @@ export default class OrderEntry extends React.Component {
 
     return (
       <div>
-        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={order} found={this.state.isFound}/>
+        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={orderNo} found={this.state.isFound}/>
         {finder(this.state.isFound)}
       </div>
     );
