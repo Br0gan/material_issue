@@ -4,6 +4,7 @@ import axios from "axios";
 import OrderEntry from "./OrderEntry";
 import Login from "./Login"
 import Loading from "./Loading"
+import LoginAlert from "./LoginAlert.js"
 
 export default class Layout extends React.Component {
     constructor() {
@@ -16,7 +17,7 @@ export default class Layout extends React.Component {
     }
     
   handleLogin(e) {
-      this.setState({loading:true})
+      this.setState({loading:true, loginWrn: ""})
       axios({
         method: 'POST',
         url: '/login',
@@ -25,9 +26,10 @@ export default class Layout extends React.Component {
       })
       .then((res) => {
         if (res.data.status) {
-          this.setState({loading: false, loggedIn: true,})
+          this.setState({loading: false, loggedIn: true, loginWrn:""})
         }
-        this.setState({loading: false})
+        console.log(res.data.error)
+        this.setState({loading: false, loginWrn: res.data.error})
       })
         .catch((err) => {console.log(err)})
     }
@@ -46,7 +48,9 @@ export default class Layout extends React.Component {
     
     handleLogout(e) {
       this.setState({
-        loggedIn: false
+        loggedIn: false,
+        userId: "",
+        pass: ""
       })
     }
     
@@ -65,7 +69,10 @@ export default class Layout extends React.Component {
                     <div className="col-md-12"><hr/></div>
                 </nav>
             </div>
-            {this.state.loading ? <Loading/> : (this.state.loggedIn) ? <OrderEntry userId={this.state.userId} pass={this.state.pass}/> : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
+            {this.state.loading ? <Loading/> : (this.state.loggedIn) 
+                ? <OrderEntry userId={this.state.userId} pass={this.state.pass}/> 
+                : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
+            {this.state.loginWrn ? <LoginAlert loginWrn={this.state.loginWrn}/> : ""}
           </div>
         );
     }
