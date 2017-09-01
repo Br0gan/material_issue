@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
+import AlertContainer from "react-alert";
 
 import OrderEntry from "./OrderEntry";
 import Login from "./Login"
 import Loading from "./Loading"
-import LoginAlert from "./LoginAlert.js"
 
 export default class Layout extends React.Component {
     constructor() {
@@ -15,21 +15,46 @@ export default class Layout extends React.Component {
         loading: false
       }
     }
+
+    alertOptions = {
+      offset: 125,
+      position: 'top right',
+      theme: 'light',
+      transistion: 'scale',
+    }
     
+  showAlert(string, type, duration) {
+    var img = <img src="../../assets/success.gif"/>
+    if (type === 'error') {
+      var img = <img src="../../assets/error.gif"/>
+    }
+    if (type === 'info') {
+      var img = <img src="../../assets/info.gif"/>
+    }  
+    this.msg.show(string, {
+      type: type,
+      time: duration,
+      icon: img 
+    })
+  }
   handleLogin(e) {
+      if (this.state.userId === "" || this.state.pass === "") {
+        return
+      }
       this.setState({loading:true, loginWrn: ""})
       axios({
         method: 'POST',
-        url: '/login',
+        url: '/api/login',
         data: {id: this.state.userId, pass: this.state.pass},
         transformRequest: data => JSON.stringify(data)
       })
       .then((res) => {
-        if (res.data.status) {
-          this.setState({loading: false, loggedIn: true, loginWrn:""})
+        if (!res.data.status) {
+          this.showAlert(res.data.error, 'info', 5000)
+          this.setState({loading: false})
+          return
         }
-        console.log(res.data.error)
-        this.setState({loading: false, loginWrn: res.data.error})
+          this.setState({loading: false, loggedIn: true, pass: ""})
       })
         .catch((err) => {console.log(err)})
     }
@@ -50,7 +75,6 @@ export default class Layout extends React.Component {
       this.setState({
         loggedIn: false,
         userId: "",
-        pass: ""
       })
     }
     
@@ -70,9 +94,11 @@ export default class Layout extends React.Component {
                 </nav>
             </div>
             {this.state.loading ? <Loading/> : (this.state.loggedIn) 
-                ? <OrderEntry userId={this.state.userId} pass={this.state.pass}/> 
+                ? <OrderEntry userId={this.state.userId} showAlert={this.showAlert.bind(this)}/> 
                 : <Login handleId={this.handleId.bind(this)} handlePw={this.handlePw.bind(this)} handleLogin={this.handleLogin.bind(this)}/>}
-            {this.state.loginWrn ? <LoginAlert loginWrn={this.state.loginWrn}/> : ""}
+            <div>
+              <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+            </div>
           </div>
         );
     }

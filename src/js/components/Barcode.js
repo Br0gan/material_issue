@@ -5,7 +5,6 @@ export default class Barcode extends React.Component {
   constructor() {
     super()
   }
-
   handleBarcode(e) {
     this.setState({barcodeId: e.target.value})
   }
@@ -15,9 +14,12 @@ export default class Barcode extends React.Component {
   }
 
   handleSubmit(e) {
+    if (!this.state.qty_issued || !this.state.barcodeId) {
+      return
+    }
     axios({
       method: 'post',
-      url: '/issuemats',
+      url: '/api/issuemats',
       data: {
         contract: 'STA',
         order_no: this.props.orderNo,
@@ -28,27 +30,35 @@ export default class Barcode extends React.Component {
       transformRequest: (data) => JSON.stringify(data)
     })
       .then((res) => {
+        if (res.data.status) {
+          var e = {
+            which: 13,
+            target: {
+              value: this.props.orderNo,
+            },
+          }
+          this.props.handleOrder(e)
+          this.props.showAlert('Barcode ID: ' + this.state.barcodeId + ' issued successfully!', 'success', 3500)
+        } else {
+          this.props.showAlert(res.data.error, 'error', 0) 
+        }
         document.getElementById("barcode_id").value = "";
         document.getElementById("scale").value = "";
-        var e = {
-          which: 13,
-          target: {
-            value: this.props.orderNo,
-          },
-        }
-        this.props.handleOrder(e)
+        document.getElementById("barcode_id").focus();
+        this.setState({barcodeId:"", qty_issued: ""})
       })
   }
+
   render() {
     return(
-      <div className="container">
-        <div className="panel panel-primary">
-          <div className="panel panel-heading text-center"><p id="heading-title">Enter Barcode Being Issued</p></div>
+    <div className="container">
+      <div className="panel panel-primary">
+        <div className="panel panel-heading text-center"><p id="heading-title">Enter Barcode Being Issued</p></div>
           <div className="panel-body">
             <div className="row">
               <div className="col-md-6">
                 <label for="barcode_id">Barcode:</label>
-                <input className="well well-sm form-control input-lg" id="barcode_id" type="text" onChange={this.handleBarcode.bind(this)}/>
+                <input autoFocus={true} className="well well-sm form-control input-lg" id="barcode_id" type="text" onChange={this.handleBarcode.bind(this)}/>
               </div>
               <div className="col-md-6">
                 <label for="scale">Scale Reading:</label>

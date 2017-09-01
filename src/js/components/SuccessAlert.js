@@ -1,21 +1,21 @@
 import React from "react"
 import AlertContainer from 'react-alert'
 
-export default class LoginAlert extends React.Component {
+export default class SuccessAlert extends React.Component {
   constructor() {
     super()
   }
   alertOptions = {
-    offset: 50,
+    offset: 14,
     position: 'top right',
     theme: 'light',
-    time: 5000,
+    time: 3000,
     transition: 'fade'
 
   }
 
   showAlert() {
-    this.msg.info(this.props.loginWrn)
+    this.msg.success(this.props.info +  ' successfuly')
   }
 
   componentDidMount() {

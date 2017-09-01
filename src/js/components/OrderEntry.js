@@ -1,5 +1,4 @@
 import React from "react";
-import uuid from "uuid/v4";
 import axios from "axios";
 
 import Barcode from "./Barcode";
@@ -9,75 +8,69 @@ import OrderSearch from "./OrderSearch";
 import ToIssue from "./ToIssue";
 import Issued from "./Issued";
 
+function sendRequest(url, data) {
+  var ax = axios({
+        method: 'post',
+        url: url,
+        data: data,
+        transfromRequest: (data) => JSON.stringify(data)
+      });
+  return ax
+}
+
 export default class OrderEntry extends React.Component {
     constructor() {
       super();
       this.state = {
         isFound: false,
       }
-    }
-    
+  }
+
   handleOrder(e) {
       if (e.which === 13) {
         const orderNo = e.target.value;
-        this.setState({orderNo: e.target.value})
-        axios({
-          method: 'post',
-          url: '/orderinfo',
-          data: {
-            id: this.props.userId,
-            pass: this.props.pass,
-            order_no: orderNo,
-            contract: 'STA'
-          },
-          transformRequest: (data) => JSON.stringify(data) 
-        })
+        const noOrderMsg = 'No order found for: ' + orderNo;
+        if (orderNo == "") {
+          return
+        }
+        const data = {order_no: orderNo, user_id: this.props.userId}
+        sendRequest('/api/orderinfo', data)
           .then((res) => {
+            if (!res.data.status) {
+              this.props.showAlert(noOrderMsg, 'info', 3000)
+              return
+            }
+
+            if (res.data.payload.state === 'Closed') {
+              this.props.showAlert('Shop Order: ' + res.data.payload.order_no + ' is currently Closed', 'info', 3000)
+              return
+            }
+
+            this.setState({orderNo: orderNo})
             this.orderInfo = {
-              orderNo: res.data.order_no,
-              partNo: res.data.part_no,
-              contract: res.data.contract,
-              lotSize: res.data.lot_size,
-              qtyComplete: res.data.qty_complete,
-              qtyScrapped: res.data.qty_scrapped,
-              qtyRemaining: res.data.qty_remaining,
-              state: res.data.state
+              orderNo: res.data.payload.order_no,
+              partNo: res.data.payload.part_no,
+              contract: res.data.payload.contract,
+              lotSize: res.data.payload.lot_size,
+              qtyComplete: res.data.payload.qty_complete,
+              qtyScrapped: res.data.payload.qty_scrapped,
+              qtyRemaining: res.data.payload.qty_remaining,
+              state: res.data.payload.state
             };
-            
-            axios({
-                method: 'post',
-                url: '/components',
-                data: {
-                  id: this.props.userId,
-                  pass: this.props.pass,
-                  order_no: orderNo,
-                  contract: 'STA'
-                },
-                transformRequest: (data) => JSON.stringify(data) 
-              })
-                .then((res) => {
-                  this.components = res.data;
-                  this.setState({isFound:true})
+            sendRequest('/api/components', data)
+              .then((res) => {
+                  this.components = res.data.data;
+                  this.setState({compsFound: true})
                 });
+            sendRequest( '/api/issued', data)
+              .then((res) => {
+                this.issuedItems = res.data.data
+                this.setState({issueFound: true})
+              });
+            this.setState({isFound: true})
         });
-        axios({
-          method: 'post',
-          url: '/issued',
-          data: {
-            id: this.props.userId,
-            pass: this.props.pass,
-            order_no: orderNo,
-            contract: 'STA'
-          },
-          transformRequest: (data) => JSON.stringify(data)
-        })
-          .then((res) => {
-            this.issuedItems = res.data;
-            this.setState({isFound: true});
-          });
       }
     }
-
     clearOrder(e) {
       this.setState({
         isFound: false,
@@ -94,15 +87,17 @@ export default class OrderEntry extends React.Component {
     var components = this.components;
     var issuedItems = this.issuedItems;
     var orderInfo = this.orderInfo;
+    var showAlert = this.props.showAlert;
+
 
     function finder(x) {
       if(x) {
         return [
-          <Barcode key={uuid()} handleOrder={handleOrder} orderNo={orderNo} userId={userId}/>,
-          (orderInfo) ? <OrderInfo key={uuid()} orderInfo={orderInfo}/> : "",
-          (components) ? <ToIssue key={uuid()} components={components}/> : "",
-          (issuedItems) ? <Issued key={uuid()} userId={userId} orderNo={orderNo} issuedItems={issuedItems} handleOrder={handleOrder}/> : ""
-      ];
+          <Barcode key="4" handleOrder={handleOrder} orderNo={orderNo} userId={userId} showAlert={showAlert}/>,
+          (orderInfo) ? <OrderInfo key="1" orderInfo={orderInfo}/> : "",
+          (components) ? <ToIssue key="2" components={components} showAlert={showAlert}/> : "",
+          (issuedItems) ? <Issued key="3" userId={userId} orderNo={orderNo} issuedItems={issuedItems} handleOrder={handleOrder} showAlert={showAlert}/> : ""
+        ];
       }
       return <OrderNotFound/>;
     }

@@ -6,67 +6,80 @@ export default class Issued extends React.Component {
     super(props)
   }
   handleQty(e) {
-    this.setState({[e.target.name]: e.target.value})
+    var id = e.target.id
+    this.setState({[id]: e.target.value})
   }
 
   handleSubmit(e) {
-    var name = e.target.name
+    var id = e.target.id
+    if (!this.state[id]) {
+      return
+    }
+    console.log(id)
     axios({
-      url: '/unissuemats',
+      url: '/api/unissuemats',
       method: 'post',
       data: {
         user_id: this.props.userId,
         contract: 'STA',
         order_no: this.props.orderNo,
-        barcode_id: e.target.name,
-        qty_unissued: this.state[e.target.name]
+        barcode_id: id,
+        qty_unissued: this.state[id]
       }
     }).then((res) => {
-      document.getElementById("un-qty").value = "";
-      var e = {
-          which: 13,
-          target: {
-            value: this.props.orderNo,
-          },
-        }
-        this.props.handleOrder(e)
+      if (res.data.status) {
+        var e = {
+            which: 13,
+            target: {
+              value: this.props.orderNo,
+            },
+          }
+          this.props.handleOrder(e)
+        this.props.showAlert(name + ': successfully unissed!', 'success', 3000)
+      } else {
+        this.props.showAlert(res.data.error, 'error', 0) 
+      }
+        document.getElementById(id).value = '';
+        this.setState({[name]: ""})
     })
   }
 
   render() {
     var issuedItems = this.props.issuedItems.map((part) =>
-          <tr key={part.barcode_id}>
+          <tr key={part.lot_batch_no}>
             <td>{part.part_no}</td>
             <td>{part.barcode_id}</td>
             <td>{part.lot_batch_no}</td>
             <td>{part.qty_issued}</td>
             <td>
-                <input className="form-control" id="un-qty" name={part.barcode_id} type="number" onChange={this.handleQty.bind(this)}/>
+                <input className="form-control un-qty" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} type="number" onChange={this.handleQty.bind(this)}/>
             </td>
             <td>
-                <button className="btn btn-sm btn-warning" name={part.barcode_id} onClick={this.handleSubmit.bind(this)}>Submit</button>
+                <button className="btn btn-sm btn-warning" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} onClick={this.handleSubmit.bind(this)}>Submit</button>
             </td>
           </tr>
     );
     return (
-			<div className="container" id="issued">
-				<h2>Issued Items</h2>
-				<p>List of componets already issued.</p>
-        <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Part Number</th>
-            <th>Barcode ID</th>
-            <th>Lot Batch No</th>
-            <th>Qty Issued</th>
-            <th>Qty To Unissue</th>
-            <th>Submit</th>
-          </tr>
-        </thead>
-          <tbody>
-            {issuedItems}
-          </tbody>
-          </table>
+      <div>
+        <div className="container" id="issued">
+          <h2>Issued Items</h2>
+          <p>List of componets already issued.</p>
+          <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>Part Number</th>
+              <th>Barcode ID</th>
+              <th>Lot Batch No</th>
+              <th>Qty Issued</th>
+              <th>Qty To Unissue</th>
+              <th>Submit</th>
+            </tr>
+          </thead>
+            <tbody>
+              {issuedItems}
+            </tbody>
+            </table>
+        </div>
       </div>
     );
   }
