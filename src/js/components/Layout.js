@@ -24,17 +24,16 @@ export default class Layout extends React.Component {
     }
     
   showAlert(string, type, duration) {
-    var img = <img src="../../assets/success.gif"/>
+    /*var img = <img src="../../assets/success.gif"/>
     if (type === 'error') {
       var img = <img src="../../assets/error.gif"/>
     }
     if (type === 'info') {
       var img = <img src="../../assets/info.gif"/>
-    }  
+    }}*/
     this.msg.show(string, {
       type: type,
-      time: duration,
-      icon: img 
+      time: duration
     })
   }
   handleLogin(e) {
@@ -42,11 +41,9 @@ export default class Layout extends React.Component {
         return
       }
       this.setState({loading:true, loginWrn: ""})
-      axios({
-        method: 'POST',
-        url: '/api/login',
-        data: {id: this.state.userId, pass: this.state.pass},
-        transformRequest: data => JSON.stringify(data)
+    axios.post('api/login', {
+      id: this.state.userId.trim(),
+      pass: this.state.pass.trim()
       })
       .then((res) => {
         if (!res.data.status) {

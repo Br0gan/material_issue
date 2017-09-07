@@ -18,6 +18,9 @@ function sendRequest(url, data) {
   return ax
 }
 
+function aysncReq(url, data) {
+  return axios.post(url, data)
+}
 export default class OrderEntry extends React.Component {
     constructor() {
       super();
@@ -38,11 +41,13 @@ export default class OrderEntry extends React.Component {
           .then((res) => {
             if (!res.data.status) {
               this.props.showAlert(noOrderMsg, 'info', 3000)
+              this.setState({isFound: false})
               return
             }
 
             if (res.data.payload.state === 'Closed') {
               this.props.showAlert('Shop Order: ' + res.data.payload.order_no + ' is currently Closed', 'info', 3000)
+              this.setState({isFound: false})
               return
             }
 
@@ -57,18 +62,13 @@ export default class OrderEntry extends React.Component {
               qtyRemaining: res.data.payload.qty_remaining,
               state: res.data.payload.state
             };
-            sendRequest('/api/components', data)
-              .then((res) => {
-                  this.components = res.data.data;
-                  this.setState({compsFound: true})
-                });
-            sendRequest( '/api/issued', data)
-              .then((res) => {
-                this.issuedItems = res.data.data
-                this.setState({issueFound: true})
-              });
-            this.setState({isFound: true})
-        });
+            axios.all([aysncReq('/api/components', data), aysncReq('/api/issued', data)])
+              .then(axios.spread((comps, issued) => {
+                this.components = comps.data.data
+                this.issuedItems = issued.data.data
+                this.setState({isFound: true})
+              }));
+            });
       }
     }
     clearOrder(e) {
@@ -76,7 +76,8 @@ export default class OrderEntry extends React.Component {
         isFound: false,
         order: ""
       });
-      document.getElementById("enter_order_no").value = "";
+      document.getElementById("enterOrder").value = "";
+      document.getElementById("enterOrder").focus();
     }
 
     render() {

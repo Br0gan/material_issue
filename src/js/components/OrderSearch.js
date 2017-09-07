@@ -1,6 +1,13 @@
 import React from "react";
 
 export default class OrderSearch extends React.Component {
+  constructor() {
+    super()
+  }
+  componentDidMount() {
+    document.getElementById("enterOrder").focus();
+  }
+
   render() {
     const handleOrder = this.props.handleOrder;
     const found = this.props.found;
@@ -18,7 +25,7 @@ export default class OrderSearch extends React.Component {
           <div class="row">
             <label className="col-sm-2 control-label text-right">Shop Order:</label>
             <div className="col-sm-3">
-              <input className="form-control input-sm" id="enter_order_no" type="text" onKeyPress={handleOrder}/>
+              <input className="form-control input-sm" id="enterOrder" type="text" onKeyPress={handleOrder}/>
             </div>
             <div class="col-sm-4"></div>
             <div className="col-sm-2">

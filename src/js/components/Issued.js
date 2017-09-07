@@ -1,9 +1,11 @@
 import React from "react";
 import axios from "axios"
+import Loading from 'react-loading-overlay';
 
 export default class Issued extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {isActive: false}
   }
   handleQty(e) {
     var id = e.target.id
@@ -12,21 +14,19 @@ export default class Issued extends React.Component {
 
   handleSubmit(e) {
     var id = e.target.id
-    if (!this.state[id]) {
+    if (!this.state[id] || this.state[id] == 0) {
       return
     }
-    console.log(id)
-    axios({
-      url: '/api/unissuemats',
-      method: 'post',
-      data: {
-        user_id: this.props.userId,
-        contract: 'STA',
-        order_no: this.props.orderNo,
-        barcode_id: id,
-        qty_unissued: this.state[id]
-      }
-    }).then((res) => {
+    console.log(this.state[id])
+    this.setState({isActive: true})
+    axios.post('/api/unissuemats', {
+      user_id: this.props.userId,
+      contract: 'STA',
+      order_no: this.props.orderNo,
+      barcode_id: id,
+      qty_unissued: this.state[id]
+    })
+    .then((res) => {
       if (res.data.status) {
         var e = {
             which: 13,
@@ -40,7 +40,7 @@ export default class Issued extends React.Component {
         this.props.showAlert(res.data.error, 'error', 0) 
       }
         document.getElementById(id).value = '';
-        this.setState({[name]: ""})
+        this.setState({[id]: "", isActive: false})
     })
   }
 
@@ -64,6 +64,12 @@ export default class Issued extends React.Component {
         <div className="container" id="issued">
           <h2>Issued Items</h2>
           <p>List of componets already issued.</p>
+            <Loading
+              active={this.state.isActive}
+              spinner
+              text='Processing..'
+              color='grey'
+              background='clear'>
           <table className="table table-striped">
           <thead>
             <tr>
@@ -78,7 +84,8 @@ export default class Issued extends React.Component {
             <tbody>
               {issuedItems}
             </tbody>
-            </table>
+          </table>
+          </Loading>
         </div>
       </div>
     );
