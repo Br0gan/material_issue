@@ -12,6 +12,7 @@ module.exports = {
           if (req.path === '/') { return '/index.html' }
           },    
         },
+      "/ws": {target: "ws://localhost:3001"}
       },
   },
   module: {
