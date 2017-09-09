@@ -3,11 +3,11 @@ import axios from "axios";
 import Websocket from 'react-websocket';
 import Loading from 'react-loading-overlay';
 
+
 export default class Barcode extends React.Component {
   constructor() {
     super();
-    this.state = {isActive: false, weight: 0, connected: false, barcodeId: ""};
-
+    this.state = {isActive: false, weight: "...", connected: false, barcodeId: ""};
     this.handleBarcode = this.handleBarcode.bind(this);
     this.handleConnect = this.handleConnect.bind(this);
     this.handleClose   = this.handleClose.bind(this);
@@ -39,43 +39,52 @@ export default class Barcode extends React.Component {
 
   handleSubmit(e) {
     const re = /[0-9.]+/g;
-    if (!this.state.weight || !this.state.barcodeId) {
-      return
-    }
-    if (weight.indexOf('-') >= 0) {
-      this.props.showAlert("Can not issue less than 1...", 'info', 4000);
+    const { orderNo, userId, handleOrder, showAlert } = this.props;
+    var weight = this.state.weight
+    var barcodeId = this.state.barcodeId
+
+    if (!weight || !barcodeId) {
       return
     }
 
-    var out = re.exec(this.state.weight);
+    if (weight.indexOf('-') >= 0) {
+      showAlert("Can not issue less than 1...", 'info', 4000);
+      return
+    }
+
+    var out = re.exec(weight);
     var weight = out[0];
 
     this.setState({isActive: true});
-
+    console.log(barcodeId)
     axios.post('/api/issuemats',
       {
         contract: 'STA',
-        order_no: this.props.orderNo,
-        barcode_id: this.state.barcodeId,
+        order_no: orderNo,
+        barcode_id: barcodeId,
         qty_issued: weight,
-        user_id: this.props.userId
+        user_id: userId
       })
       .then((res) => {
         if (res.data.status) {
           var e = {
             which: 13,
             target: {
-              value: this.props.orderNo,
+              value: orderNo,
             },
           }
-          this.props.handleOrder(e);
-          this.props.showAlert('Barcode ID: ' + this.state.barcodeId + ' issued successfully!', 'success', 3500);
+          handleOrder(e);
+          showAlert('Barcode ID: ' + this.state.barcodeId + ' issued successfully!', 'success', 3500);
         } else {
-          this.props.showAlert(res.data.error, 'error', 0);
+          showAlert(res.data.error, 'error', 0);
         }
         this.setState({barcodeId:"", qty_issued: "", isActive: false});
         this.inputBarcode.focus();
       })
+  }
+
+  componentDidMount() {
+    this.inputBarcode.focus();
   }
 
   render() {
