@@ -5,10 +5,9 @@ import Loading from 'react-loading-overlay';
 export default class Issued extends React.Component {
   constructor(props) {
     super(props);
-    const { orderNo, userId, handleOrder, showAlert } = this.props;
     this.state = {isActive: false};
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handQty = this.handleQty.bind(this);
+    this.handleQty = this.handleQty.bind(this);
   }
   handleQty(e) {
     var id = e.target.id;
@@ -16,6 +15,7 @@ export default class Issued extends React.Component {
   }
 
   handleSubmit(e) {
+    const { orderNo, userId, handleOrder, showAlert } = this.props;
     var id = e.target.id;
     var qtyUnissued = this.state[id];
     if (!qtyUnissued || qtyUnissued == 0) {
@@ -23,6 +23,7 @@ export default class Issued extends React.Component {
     };
     this.setState({isActive: true});
     axios.post('/api/unissuemats', {
+      contract: 'STA',
       user_id: userId,
       order_no: orderNo,
       barcode_id: id,
@@ -36,7 +37,7 @@ export default class Issued extends React.Component {
               value: orderNo,
             },
           };
-          handleOrder(e);
+        handleOrder(e);
         showAlert(name + ': successfully unissed!', 'success', 3000);
       } else {
         showAlert(res.data.error, 'error', 0);
@@ -47,6 +48,8 @@ export default class Issued extends React.Component {
   }
 
   render() {
+    var handleQty = this.handleQty;
+    var handleSubmit = this.handleSubmit;
     function renderIssuedItems(part) {
         return (
         <tr key={part.lot_batch_no}>
@@ -55,10 +58,10 @@ export default class Issued extends React.Component {
             <td>{part.lot_batch_no}</td>
             <td>{part.qty_issued}</td>
             <td>
-                <input className="form-control un-qty" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} type="number" onChange={this.handleQty}/>
+                <input className="form-control un-qty" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} type="number" onChange={handleQty}/>
             </td>
             <td>
-                <button className="btn btn-sm btn-warning" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} onClick={this.handleSubmit}>Submit</button>
+                <button className="btn btn-sm btn-warning" id={(part.barcode_id != 'No Barcode') ? part.barcode_id : part.lot_batch_no} onClick={handleSubmit}>Submit</button>
             </td>
         </tr>
         )};

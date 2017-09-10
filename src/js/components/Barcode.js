@@ -7,8 +7,7 @@ import Loading from 'react-loading-overlay';
 export default class Barcode extends React.Component {
   constructor(props) {
     super(props);
-    const { orderNo, userId, handleOrder, showAlert } = this.props;
-    this.state = {isActive: false, weight: "...", connected: false, barcodeId: ""};
+    this.state = {isActive: false, weight: "1", connected: false, barcodeId: ""};
     this.handleBarcode = this.handleBarcode.bind(this);
     this.handleConnect = this.handleConnect.bind(this);
     this.handleClose   = this.handleClose.bind(this);
@@ -40,6 +39,7 @@ export default class Barcode extends React.Component {
 
   handleSubmit(e) {
     const re = /[0-9.]+/g;
+    const { orderNo, userId, handleOrder, showAlert } = this.props;
     var weight = this.state.weight
     var barcodeId = this.state.barcodeId
 
