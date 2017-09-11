@@ -8,16 +8,6 @@ import OrderSearch from "./OrderSearch";
 import ToIssue from "./ToIssue";
 import Issued from "./Issued";
 
-function sendRequest(url, data) {
-  var ax = axios({
-        method: 'post',
-        url: url,
-        data: data,
-        transfromRequest: (data) => JSON.stringify(data)
-      });
-  return ax
-}
-
 function aysncReq(url, data) {
   return axios.post(url, data)
 }
@@ -26,6 +16,7 @@ export default class OrderEntry extends React.Component {
       super();
       this.state = {
         isFound: false,
+        orderNo: ""
       }
   }
 
@@ -37,7 +28,7 @@ export default class OrderEntry extends React.Component {
           return
         }
         const data = {order_no: orderNo, user_id: this.props.userId}
-        sendRequest('/api/orderinfo', data)
+        axios.post('/api/orderinfo', data)
           .then((res) => {
             if (!res.data.status) {
               this.props.showAlert(noOrderMsg, 'info', 3000)
@@ -71,12 +62,16 @@ export default class OrderEntry extends React.Component {
             });
       }
     }
+
+    handleOrderNo(e) {
+      this.setState({orderNo: e.target.value});
+    };
+
     clearOrder(e) {
       this.setState({
         isFound: false,
-        order: ""
+        orderNo: ""
       });
-      document.getElementById("enterOrder").value = "";
       document.getElementById("enterOrder").focus();
     }
 
@@ -85,6 +80,7 @@ export default class OrderEntry extends React.Component {
     var userId = this.props.userId;
     var handleOrder = this.handleOrder.bind(this);
     var clearOrder = this.clearOrder.bind(this);
+    var handleOrderNo = this.handleOrderNo.bind(this);
     var components = this.components;
     var issuedItems = this.issuedItems;
     var orderInfo = this.orderInfo;
@@ -96,7 +92,7 @@ export default class OrderEntry extends React.Component {
         return [
           <Barcode key="4" handleOrder={handleOrder} orderNo={orderNo} userId={userId} showAlert={showAlert}/>,
           (orderInfo) ? <OrderInfo key="1" orderInfo={orderInfo}/> : "",
-          (components) ? <ToIssue key="2" components={components} showAlert={showAlert}/> : "",
+          (components) ? <ToIssue key="2" components={components}/> : "",
           (issuedItems) ? <Issued key="3" userId={userId} orderNo={orderNo} issuedItems={issuedItems} handleOrder={handleOrder} showAlert={showAlert}/> : ""
         ];
       }
@@ -105,7 +101,7 @@ export default class OrderEntry extends React.Component {
 
     return (
       <div>
-        <OrderSearch handleOrder={handleOrder} clearOrder={clearOrder} barcodeId={orderNo} found={this.state.isFound}/>
+        <OrderSearch key="1" handleOrder={handleOrder} clearOrder={clearOrder} handleOrderNo={handleOrderNo} orderNo={orderNo} found={this.state.isFound}/>
         {finder(this.state.isFound)}
       </div>
     );

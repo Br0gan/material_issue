@@ -2,15 +2,14 @@ import React from "react";
 
 export default class OrderSearch extends React.Component {
   constructor() {
-    super()
-  }
+    super();
+  };
   componentDidMount() {
-    document.getElementById("enterOrder").focus();
-  }
+    this.inputOrder.focus();
+  };
 
   render() {
-    const handleOrder = this.props.handleOrder;
-    const found = this.props.found;
+    const { handleOrder, handleOrderNo, found, clearOrder, orderNo } = this.props;
 
     function handleButton(found, handler) {
       if (found) {
@@ -25,11 +24,11 @@ export default class OrderSearch extends React.Component {
           <div class="row">
             <label className="col-sm-2 control-label text-right">Shop Order:</label>
             <div className="col-sm-3">
-              <input className="form-control input-sm" id="enterOrder" type="text" onKeyPress={handleOrder}/>
+              <input className="form-control input-sm" ref={(input) => {this.inputOrder = input;}} value={orderNo} id="enterOrder" type="text" onChange={handleOrderNo} onKeyPress={handleOrder}/>
             </div>
             <div class="col-sm-4"></div>
             <div className="col-sm-2">
-              {handleButton(this.props.found, this.props.clearOrder)}
+              {handleButton(found, clearOrder)}
             </div>
           </div>
         </div>

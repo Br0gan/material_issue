@@ -56,7 +56,6 @@ export default class Barcode extends React.Component {
     var weight = out[0];
 
     this.setState({isActive: true});
-    console.log(barcodeId)
     axios.post('/api/issuemats',
       {
         contract: 'STA',

@@ -3,15 +3,9 @@ import "../client.css"
 
 export default class ToIssue extends React.Component {
   render() {
-   var components = this.props.components.map((part) =>
-        <tr key={part.part_no} className={getIssuedStatus((part.qty_remaining))}>
-          <td>{part.part_no}</td>
-          <td>{part.qty_required}</td>
-          <td>{part.qty_issued}</td>
-          <td>{part.qty_remaining}</td>
-        </tr>
 
-    );
+    const { components } = this.props;
+
     function getIssuedStatus(x) {
       if (x === 0) {
         return 'success';
@@ -22,6 +16,15 @@ export default class ToIssue extends React.Component {
       return;
     }
 
+    function renderComponents(part) {
+      return (
+        <tr key={part.part_no} className={getIssuedStatus((part.qty_remaining))}>
+          <td>{part.part_no}</td>
+          <td>{part.qty_required}</td>
+          <td>{part.qty_issued}</td>
+          <td>{part.qty_remaining}</td>
+        </tr>
+      )};
     return (
       <div className="container" id="toIssue">
         <h2>Components</h2>
@@ -36,7 +39,7 @@ export default class ToIssue extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {components}
+          {components.map(renderComponents)}
         </tbody>
         </table>
         <div className="row">
